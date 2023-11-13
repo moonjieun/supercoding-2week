@@ -5,10 +5,10 @@ export const CenteredContainer = styled.div`
   align-items: center;
   justify-content: center;
   min-height: 100vh;
+  padding: 50px;
 `;
 
 export const Form = styled.form`
-  box-shadow: 1px 2px 30px 5px #e8f3ffde;
   padding: 20px 80px;
   border-radius: 20px;
 `;
@@ -31,24 +31,6 @@ export const InputContainer = styled.div`
   display: flex;
   flex-direction: column;
   padding: 15px 0;
-`;
-
-export const ButtonContainer = styled.div`
-  display: flex;
-  gap: 20px;
-  align-items: center;
-  justify-content: space-between;
-  .direct-login {
-    width: 50%;
-    /* margin: 0 auto; */
-    background-color: var(--main-color);
-    color: white;
-    border: none;
-    padding: 15px;
-    cursor: pointer;
-    text-align: center;
-    border-radius: 8px;
-  }
 `;
 
 export const StyledButton = styled.button`
@@ -80,21 +62,18 @@ export const StyledInput = styled.input`
 `;
 
 export const StyledInputWithCustomStyle = styled(StyledButton)`
-  /* width: 50%;
-    margin: 0 auto;
-    padding: 15px;
-    background-color: #fff;
-    border: 1px solid #4593FC;
-    color: #4593FC;
-    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.05); */
   width: 50%;
-  margin: 0 auto;
+  margin: 30px auto;
   background-color: ${(props) => (props.disabled ? "gray" : "#007bff")};
   color: white;
   border: none;
   padding: 15px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const ButtonCustomStyle = styled(StyledButton)`

@@ -8,9 +8,7 @@ import { styled } from 'styled-components';
 `;
 
  export const Form = styled.div`
-  box-shadow: 1px 2px 30px 5px #e8f3ffde;
   padding: 20px 80px;
-  border-radius: 20px;
 `;
 
  export const Title = styled.h2`
@@ -61,7 +59,6 @@ export const StyledInput = styled.input`
   &::placeholder {
     color: #9EC8FF;
   }
-
 
 `;
 

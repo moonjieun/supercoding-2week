@@ -1,18 +1,11 @@
 import React, { useState } from "react";
 import * as S from "./signup.style";
-import DaumPostcodeEmbed from "react-daum-postcode";
-import {
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalOverlay,
-} from "@chakra-ui/react";
-import axios from "axios";
 import { successSignUp } from "../../store/slice/authSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import ModalAdress from "./forminput/ModalAdress";
+import FormInput from "./forminput/FormInput";
+import { checkEmail, signUpUser } from "../../apis/user/signUp";
 
 interface FormData {
   userName: string;
@@ -24,19 +17,27 @@ interface FormData {
   detailAddress: string;
 }
 
-interface Address {
-  postcode: "";
-  roadAddress: "";
-  numberAddress: "";
+interface AddressData {
+  roadAddress: string;
+  numberAddress: string;
+  postcode: string;
+  bname: string;
+  buildingName: string;
+  apartment: string;
+  zonecode: string;
 }
 
 const SignUp: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [address, setAddress] = useState<Address>({
-    postcode: "",
+  const [address, setAddress] = useState<AddressData>({
     roadAddress: "",
     numberAddress: "",
+    postcode: "",
+    bname: "",
+    buildingName: "",
+    apartment: "",
+    zonecode: "",
   });
 
   const [formData, setFormData] = useState<FormData>({
@@ -70,7 +71,7 @@ const SignUp: React.FC = () => {
     setIsModalOpen(false);
   };
 
-  const handleComplete = (data: any) => {
+  const handleComplete = (data: AddressData) => {
     const roadAddr = data.roadAddress;
     let extraRoadAddr = "";
 
@@ -156,22 +157,8 @@ const SignUp: React.FC = () => {
 
     if (!!isFormValid && !!isAnyFieldFilled) {
       try {
-        const userData = {
-          userName: formData.userName,
-          phoneNumber: formData.phoneNumber,
-          email: formData.email,
-          password: formData.password,
-          address: formData.address,
-          detailAddress: formData.detailAddress,
-        };
-        const response = await axios.post(
-          "https://pet-commerce.shop/v1/api/users",
-          userData
-        );
-        console.log(response);
-        // const token = response.data.token;
-        dispatch(successSignUp({ ...userData }));
-        // localStorage.setItem("token", token);
+        signUpUser(formData);
+        dispatch(successSignUp({ ...formData }));
         navigate("/login");
         setFormData({
           userName: "",
@@ -192,7 +179,6 @@ const SignUp: React.FC = () => {
         console.error("가입 요청 에러:", error);
       }
     }
-    console.log(formData);
   };
 
   /**email중복검사 */
@@ -205,27 +191,15 @@ const SignUp: React.FC = () => {
       alert("이메일을 입력해주세요!");
       return;
     }
-    const requestData = {
-      email: formData.email,
-    };
+    const requestData = formData.email;
     try {
-      const response = await axios.post(
-        "https://pet-commerce.shop/v1/api/users/emailConfirm",
-        requestData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log(response);
+      const response = await checkEmail(requestData);
       if (response.status === 200) {
         setButtonEnabled(true);
         alert("사용 가능한 이메일입니다.");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       alert("이메일 중복");
-      console.error("에러:", error);
     }
   };
 
@@ -305,182 +279,107 @@ const SignUp: React.FC = () => {
     <S.CenteredContainer>
       <S.Form>
         <S.Title>회원가입</S.Title>
-        <S.InputContainer>
-          <S.StyledLabel htmlFor="userName">이름</S.StyledLabel>
-          <S.StyledInput
-            type="text"
-            name="userName"
-            value={formData.userName}
-            onChange={handleChange}
-            onBlur={() => handleBlur("userName")}
-            className={validationErrors.userName ? "error" : ""}
-            placeholder="이름"
-          />
-          {validationErrors.userName && (
-            <S.StyledSpan className="error-message">
-              {validationErrors.userName}
-            </S.StyledSpan>
-          )}
-        </S.InputContainer>
-        <S.InputContainer>
-          <S.StyledLabel htmlFor="phoneNumber">휴대폰 번호</S.StyledLabel>
-          <S.StyledInput
-            type="text"
-            name="phoneNumber"
-            value={formData.phoneNumber}
-            onChange={handleChange}
-            onBlur={() => handleBlur("phoneNumber")}
-            className={validationErrors.phoneNumber ? "error" : ""}
-            placeholder="'-'없이 입력"
-          />
-          {validationErrors.phoneNumber && (
-            <S.StyledSpan className="error-message">
-              {validationErrors.phoneNumber}
-            </S.StyledSpan>
-          )}
-        </S.InputContainer>
-        <S.InputContainer>
-          <S.StyledLabel htmlFor="email">이메일</S.StyledLabel>
-          <S.StyledInput
-            type="text"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            onBlur={() => handleBlur("email")}
-            className={validationErrors.email ? "error" : ""}
-            placeholder="example@example.com"
-          />
-          {validationErrors.email && (
-            <S.StyledSpan className="error-message">
-              {validationErrors.email}
-            </S.StyledSpan>
-          )}
-          <S.DuplicateCheckButton onClick={handleEmailDuplicateCheck}>
-            중복확인
-          </S.DuplicateCheckButton>
-        </S.InputContainer>
-        <S.InputContainer>
-          <S.StyledLabel htmlFor="password">비밀번호</S.StyledLabel>
-          <S.StyledInput
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            onBlur={() => handleBlur("password")}
-            className={validationErrors.password ? "error" : ""}
-            placeholder="비밀번호 (영문 대소문자/숫자/특수문자 중 2가지 이상 조합,8자~16자)"
-          />
-          {validationErrors.password && (
-            <S.StyledSpan className="error-message">
-              {validationErrors.password}
-            </S.StyledSpan>
-          )}
-        </S.InputContainer>
-        <S.InputContainer>
-          <S.StyledLabel htmlFor="checkPassword">비밀번호 재확인</S.StyledLabel>
-          <S.StyledInput
-            type="password"
-            name="checkPassword"
-            value={formData.checkPassword}
-            onChange={handleChange}
-            onBlur={() => handleBlur("checkPassword")}
-            className={validationErrors.checkPassword ? "error" : ""}
-            placeholder="비밀번호 확인"
-          />
-          {validationErrors.checkPassword && (
-            <S.StyledSpan className="error-message">
-              {validationErrors.checkPassword}
-            </S.StyledSpan>
-          )}
-        </S.InputContainer>
-        <S.InputContainer>
-          <S.StyledLabel htmlFor="checkPassword">우편번호</S.StyledLabel>
-          <S.StyledInput
-            type="text"
-            name="postcode"
-            value={address.postcode}
-            onChange={handleChange}
-            placeholder="우편번호"
-          />
-          <S.ButtonContainer>
-            <S.DuplicateCheckButton
-              type="button"
-              onClick={openModal} // 모달 열기 버튼
-            >
-              주소 검색
-            </S.DuplicateCheckButton>
-          </S.ButtonContainer>
-        </S.InputContainer>
-        <S.InputContainer>
-          <S.StyledLabel htmlFor="checkPassword">도로명주소</S.StyledLabel>
-          <S.StyledInput
-            type="text"
-            name="roadAddress"
-            value={address.roadAddress}
-            onChange={handleChange}
-            placeholder="도로명주소"
-          />
-        </S.InputContainer>
-        <S.InputContainer>
-          <S.StyledLabel htmlFor="checkPassword">상세주소</S.StyledLabel>
-          <S.StyledInput
-            type="text"
-            name="detailAddress"
-            value={formData.detailAddress}
-            onChange={handleChange}
-            onBlur={() => handleBlur("detailAddress")}
-            className={validationErrors.detailAddress ? "error" : ""}
-            placeholder="상세주소를 입력해주세요."
-          />
-        </S.InputContainer>
-        {validationErrors.detailAddress && (
-          <S.StyledSpan className="error-message">
-            {validationErrors.detailAddress}
-          </S.StyledSpan>
-        )}
+        <FormInput
+          label="이름"
+          name="userName"
+          type="text"
+          value={formData.userName}
+          onChange={handleChange}
+          onBlur={() => handleBlur("userName")}
+          errorMessage={validationErrors.userName}
+          className={validationErrors.userName ? "error" : ""}
+          placeholder="이름"
+        />
+        <FormInput
+          label="휴대폰"
+          name="phoneNumber"
+          type="text"
+          value={formData.phoneNumber}
+          onChange={handleChange}
+          onBlur={() => handleBlur("phoneNumber")}
+          errorMessage={validationErrors.phoneNumber}
+          className={validationErrors.phoneNumber ? "error" : ""}
+          placeholder="'-'없이 입력"
+        />
+        <FormInput
+          label="이메일"
+          name="email"
+          type="text"
+          value={formData.email}
+          onChange={handleChange}
+          onBlur={() => handleBlur("email")}
+          showButton={true}
+          onButtonClick={handleEmailDuplicateCheck}
+          placeholder="example@example.com"
+        />
 
-        <S.ButtonContainer>
-          <div className="direct-login" onClick={() => navigate("/login")}>
-            로그인하러 가기
-          </div>
-          <S.StyledInputWithCustomStyle
-            type="submit"
-            onClick={handleSubmit}
-            disabled={
-              !isSubmitButtonEnabled || !isAnyFieldFilled || !isButtonEnabled
-            }
-          >
-            회원가입
-          </S.StyledInputWithCustomStyle>
-        </S.ButtonContainer>
+        <FormInput
+          label="비밀번호"
+          name="password"
+          type="password"
+          value={formData.password}
+          onChange={handleChange}
+          onBlur={() => handleBlur("password")}
+          errorMessage={validationErrors.password}
+          className={validationErrors.password ? "error" : ""}
+          placeholder="비밀번호 (영문 대소문자/숫자/특수문자 중 2가지 이상 조합,8자~16자)"
+        />
+        <FormInput
+          label="비밀번호 재확인"
+          name="checkPassword"
+          type="password"
+          value={formData.checkPassword}
+          onChange={handleChange}
+          onBlur={() => handleBlur("checkPassword")}
+          errorMessage={validationErrors.checkPassword}
+          className={validationErrors.checkPassword ? "error" : ""}
+          placeholder="비밀번호 확인"
+        />
+        <FormInput
+          label="우편번호"
+          name="postcode"
+          type="text"
+          value={address.postcode}
+          onChange={handleChange}
+          placeholder="우편번호"
+          showButton={true}
+          onButtonClick={openModal}
+        />
+        <FormInput
+          label="도로명주소"
+          name="roadAddress"
+          type="text"
+          value={address.roadAddress}
+          onChange={handleChange}
+          placeholder="도로명주소"
+        />
+        <FormInput
+          label="상세주소"
+          name="detailAddress"
+          type="text"
+          value={formData.detailAddress}
+          onChange={handleChange}
+          onBlur={() => handleBlur("detailAddress")}
+          errorMessage={validationErrors.detailAddress}
+          className={validationErrors.detailAddress ? "error" : ""}
+          placeholder="상세주소를 입력해주세요."
+        />
+        <S.StyledInputWithCustomStyle
+          type="submit"
+          onClick={handleSubmit}
+          disabled={
+            !isSubmitButtonEnabled || !isAnyFieldFilled || !isButtonEnabled
+          }
+        >
+          회원가입
+        </S.StyledInputWithCustomStyle>
       </S.Form>
-
       {isModalOpen && (
-        <Modal isOpen={isModalOpen} onClose={closeModal}>
-          <ModalOverlay backgroundColor="rgba(0, 0, 0, 0.5)" />
-          <ModalContent
-            padding="40px"
-            bgColor="white"
-            width="500px"
-            position="fixed"
-            top="33%"
-            left="40%"
-          >
-            <ModalHeader fontSize="24px">주소 검색</ModalHeader>
-            <ModalCloseButton
-              width="20%"
-              color="#007bff"
-              border="2px solid #007bff"
-              bgColor="white"
-              borderRadius="10px"
-              padding="10px"
-              margin="10px 0"
-            />
-            <ModalBody width="100%">
-              <DaumPostcodeEmbed onComplete={handleComplete} />
-            </ModalBody>
-          </ModalContent>
-        </Modal>
+        <ModalAdress
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          onComplete={handleComplete}
+        />
       )}
     </S.CenteredContainer>
   );

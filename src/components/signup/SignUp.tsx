@@ -157,7 +157,7 @@ const SignUp: React.FC = () => {
 
     if (!!isFormValid && !!isAnyFieldFilled) {
       try {
-        signUpUser(formData);
+        await signUpUser(formData);
         dispatch(successSignUp({ ...formData }));
         navigate("/login");
         setFormData({

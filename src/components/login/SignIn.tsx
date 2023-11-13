@@ -53,10 +53,10 @@ const SignIn: React.FC = () => {
         localStorage.setItem("accesstoken", token);
         navigate("/");
       }
-    } catch (error: any) {
-      if (error.response) {
-        const errorCode = error.response.data.errorCode;
-        const errorMessage = error.response.data.errorMessage;
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        const errorCode = error.response?.data.errorCode;
+        const errorMessage = error.response?.data.errorMessage;
 
         if (errorCode === "INVALID_LOGIN_INPUT") {
           alert(errorMessage);

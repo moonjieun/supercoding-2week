@@ -110,8 +110,6 @@ const SignUp: React.FC = () => {
       ...prevFormData,
       [name]: value,
     }));
-    // 유효성검사 함수에 입력값 넣기
-    validateField(name as keyof FormData, value);
   };
 
   const handleBlur = (fieldName: keyof FormData) => {

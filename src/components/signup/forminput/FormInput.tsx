@@ -13,6 +13,7 @@ interface InputProps {
   placeholder?: string;
   showButton?: boolean;
   onButtonClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  inputStyle?: React.CSSProperties;
 }
 
 const FormInput: React.FC<InputProps> = ({
@@ -27,6 +28,7 @@ const FormInput: React.FC<InputProps> = ({
   placeholder,
   showButton,
   onButtonClick,
+  inputStyle,
 }) => (
   <S.InputContainer>
     <S.StyledLabel htmlFor={name}>{label}</S.StyledLabel>
@@ -38,6 +40,7 @@ const FormInput: React.FC<InputProps> = ({
       onBlur={onBlur}
       className={className || ""}
       placeholder={placeholder}
+      style={inputStyle}
     />
     {errorMessage && (
       <S.StyledSpan className="error-message">{errorMessage}</S.StyledSpan>

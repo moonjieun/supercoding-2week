@@ -203,63 +203,63 @@ const SignUp: React.FC = () => {
 
   /**유효성 검사 함수 */
   const validateField = (fieldName: keyof FormData, value: string) => {
-    let error = "";
-    switch (fieldName) {
-      case "userName":
-        if (!value) {
-          error = "";
-        } else if (value.length === 1 && /^[ㄱ-ㅎㅏ-ㅣ]+$/.test(value)) {
-          error = "올바르지 않은 이름 형식입니다.";
-        } else if (/[ㄱ-ㅎㅏ-ㅣ0-9!@#$%^&*(),.?":{}|<>]/.test(value)) {
-          error = "특수문자나 숫자, 초성은 사용할 수 없습니다.";
-        }
-        break;
-      case "phoneNumber":
-        if (!value) {
-          error = "";
-        } else if (!/^\d+$/.test(value) || value.length !== 11) {
-          error = "- 없이 11자리의 숫자를 입력해주세요.";
-        }
-        break;
-      case "email":
-        if (!value) {
-          error = "";
-        } else if (
-          !/^[A-Za-z0-9]([-_.]?[A-Za-z0-9_])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*.[A-Za-z]{2,3}$/.test(
-            value
-          )
-        ) {
-          error = "올바른 이메일 형식이 아닙니다.";
-        }
-        break;
-      case "password":
-        if (!value) {
-          error = "";
-        } else if (
-          !/(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}/.test(
-            value
-          )
-        ) {
-          error =
-            "영문 대소문자와 숫자, 특수문자 중 2가지 이상 조합하여 8~16자여야 합니다.";
-        }
-        break;
-      case "checkPassword":
-        if (!value) {
-          error = "";
-        } else if (value !== formData.password) {
-          error = "비밀번호가 일치하지 않습니다.";
-        }
-        break;
-      case "detailAddress":
-        if (!value.trim()) {
-          error = "상세주소를 입력해주세요";
-        }
-        break;
-      default:
-        break;
-    }
+    const getErrorMessage = (
+      rule: (value: string) => boolean,
+      errorMessage: string
+    ) => {
+      return rule(value) ? "" : errorMessage;
+    };
 
+    const validationRules: Record<string, () => string> = {
+      userName: () => {
+        if (!value) return "";
+        if (value.length === 1 && /^[ㄱ-ㅎㅏ-ㅣ]+$/.test(value)) {
+          return "올바르지 않은 이름 형식입니다.";
+        }
+        if (/[ㄱ-ㅎㅏ-ㅣ0-9!@#$%^&*(),.?":{}|<>]/.test(value)) {
+          return "특수문자나 숫자, 초성은 사용할 수 없습니다.";
+        }
+        return "";
+      },
+      phoneNumber: () => {
+        if (!value) return "";
+        return getErrorMessage(
+          () => /^\d+$/.test(value) && value.length === 11,
+          "- 없이 11자리의 숫자를 입력해주세요."
+        );
+      },
+      email: () => {
+        if (!value) return "";
+        return getErrorMessage(
+          () =>
+            /^[A-Za-z0-9]([-_.]?[A-Za-z0-9_])*@[A-Za-z0-9]([-_.]?[A-Za-z0-9])*.[A-Za-z]{2,3}$/.test(
+              value
+            ),
+          "올바른 이메일 형식이 아닙니다."
+        );
+      },
+      password: () => {
+        if (!value) return "";
+        return getErrorMessage(
+          () =>
+            /(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}/.test(
+              value
+            ),
+          "영문 대소문자와 숫자, 특수문자 중 2가지 이상 조합하여 8~16자여야 합니다."
+        );
+      },
+      checkPassword: () => {
+        if (!value) return "";
+        return getErrorMessage(
+          () => value === formData.password,
+          "비밀번호가 일치하지 않습니다."
+        );
+      },
+      detailAddress: () => {
+        return !value.trim() ? "상세주소를 입력해주세요" : "";
+      },
+    };
+    const error = validationRules[fieldName]();
     setValidationErrors((prevValidationErrors) => ({
       ...prevValidationErrors,
       [fieldName]: error,

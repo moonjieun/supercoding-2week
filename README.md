@@ -1,5 +1,8 @@
 # 슈퍼코딩 2주차 프로젝트
 
+## 시연 영상
+https://www.youtube.com/watch?v=NIRo1T6PqRk
+
 ## 요구사항
 
 ### 로그인 페이지/로그아웃 기능

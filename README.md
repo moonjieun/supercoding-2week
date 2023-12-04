@@ -77,22 +77,3 @@ https://www.youtube.com/watch?v=NIRo1T6PqRk
 #### git branch 전략
 
 - Github Flow
-
-### 기술 챌린지
-
-- Github Actions CI/CD
-  - 테스트를 위한 불필요한 반복적 작업을 줄이기 위함과 동시에 개발 속도 향상을 위해 사용.
-  - Github Actions는 github에서 제공하고, 쉽게 CI/CD를 구축할 수 있는 장점이 있으며 YAML이란 포맷을 사용해 가독성이 높고, 정보가 많아 사용.
-- CloudFront 배포
-
-  - CloudFront는 엣지 로케이션을 통해 콘텐츠를 제공하므로 사용자에게 빠른 속도의 네트워크를 전송하기 위해 CDN 서비스인 CloudFront 사용.
-  - 보안을 위한 http 배포가 아닌 https 배포를 위해 사용.
-
-- 무한 스크롤
-  - InfiniteScroll VS IntersectionObserver
-    - 둘 다 모두 스크롤 이벤트를 다룸
-  - 목적
-    - 인피니티스크롤 : 사용자가 스크롤을 내리면 새로운 데이터를 동적으로 로드에 주 목적
-    - 인터섹션 옵저버 : 요소의 가시성을 관찰해, 특정 요소가 화면에 보이면 콜백 실행. 이미지 또는 레이지 로딩과 같은 요소의 가시성을 감지 주 목적
-  - 선택 : InfiniteScroll
-  - 이유 : 사용자가 무한스크롤 후 특정 페이지에서 새로고침시 최상단으로 올라가지는 것을 방지 하기 위해. 즉 사용자의 위치를 기억하고 이전 위치로 돌아가기 위해 라이브러리 사용

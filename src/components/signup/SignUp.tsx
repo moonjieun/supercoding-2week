@@ -17,10 +17,9 @@ interface FormData {
   detailAddress: string;
 }
 
-interface AddressData {
+export interface AddressData {
   roadAddress: string;
   numberAddress: string;
-  postcode: string;
   bname: string;
   buildingName: string;
   apartment: string;
@@ -33,7 +32,6 @@ const SignUp: React.FC = () => {
   const [address, setAddress] = useState<AddressData>({
     roadAddress: "",
     numberAddress: "",
-    postcode: "",
     bname: "",
     buildingName: "",
     apartment: "",
@@ -96,7 +94,7 @@ const SignUp: React.FC = () => {
 
     setAddress({
       ...address,
-      postcode: data.zonecode,
+      zonecode: data.zonecode,
       roadAddress: roadAddr,
     });
 
@@ -169,7 +167,7 @@ const SignUp: React.FC = () => {
         });
         setAddress({
           ...address,
-          postcode: "",
+          zonecode: "",
           roadAddress: "",
           numberAddress: "",
         });
@@ -335,9 +333,9 @@ const SignUp: React.FC = () => {
         />
         <FormInput
           label="우편번호"
-          name="postcode"
+          name="zonecode"
           type="text"
-          value={address.postcode}
+          value={address.zonecode}
           onChange={handleChange}
           placeholder="우편번호"
           showButton={true}

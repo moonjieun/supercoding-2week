@@ -8,11 +8,12 @@ import {
   ModalOverlay,
 } from "@chakra-ui/react";
 import DaumPostcodeEmbed from "react-daum-postcode";
+import { AddressData } from "../SignUp";
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onComplete: (data: any) => void;
+  onComplete: (data: AddressData) => void;
 }
 
 const AddressModal: React.FC<ModalProps> = ({

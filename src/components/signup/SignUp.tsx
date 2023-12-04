@@ -19,7 +19,6 @@ interface FormData {
 
 export interface AddressData {
   roadAddress: string;
-  numberAddress: string;
   bname: string;
   buildingName: string;
   apartment: string;
@@ -31,7 +30,6 @@ const SignUp: React.FC = () => {
   const navigate = useNavigate();
   const [address, setAddress] = useState<AddressData>({
     roadAddress: "",
-    numberAddress: "",
     bname: "",
     buildingName: "",
     apartment: "",
@@ -98,7 +96,7 @@ const SignUp: React.FC = () => {
       roadAddress: roadAddr,
     });
 
-    closeModal(); // 모달을 닫음
+    closeModal();
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -169,7 +167,6 @@ const SignUp: React.FC = () => {
           ...address,
           zonecode: "",
           roadAddress: "",
-          numberAddress: "",
         });
       } catch (error) {
         console.error("가입 요청 에러:", error);
@@ -333,7 +330,7 @@ const SignUp: React.FC = () => {
         />
         <FormInput
           label="우편번호"
-          name="zonecode"
+          name="postcode"
           type="text"
           value={address.zonecode}
           onChange={handleChange}
